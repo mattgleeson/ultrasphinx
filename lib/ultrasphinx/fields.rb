@@ -112,11 +112,11 @@ This is a special singleton configuration class that stores the index field conf
             extract_table_alias!(entry, klass)
             extract_field_alias!(entry, klass)
             
-            unless klass.columns_hash[entry['field']]
+            unless entry['type'] || klass.columns_hash[entry['field']]
               # XXX I think this is here for migrations
               Ultrasphinx.say "warning: field #{entry['field']} is not present in #{model}"
             else
-              save_and_verify_type(entry['as'], klass.columns_hash[entry['field']].type, nil, klass)
+              save_and_verify_type(entry['as'], entry['type'] || klass.columns_hash[entry['field']].type, nil, klass)
               install_duplicate_fields!(entry, klass)
             end            
           end  
@@ -128,7 +128,7 @@ This is a special singleton configuration class that stores the index field conf
             
             association_model = get_association_model(klass, entry)
             
-            save_and_verify_type(entry['as'] || entry['field'], association_model.columns_hash[entry['field']].type, nil, klass)
+            save_and_verify_type(entry['as'] || entry['field'], entry['type'] || association_model.columns_hash[entry['field']].type, nil, klass)
             install_duplicate_fields!(entry, klass)
           end  
           

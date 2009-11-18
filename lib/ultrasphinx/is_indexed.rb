@@ -30,6 +30,8 @@ To allow sorting by a text field, also pass a hash and set the <tt>:sortable</tt
 
 To apply an SQL function to a field before it is indexed, use the key <tt>:function_sql</tt>. Pass a string such as <tt>"REPLACE(?, '_', ' ')"</tt>. The table and column name for your field will be interpolated into the first <tt>?</tt> in the string.
 
+To override the built-in ActiveRecord-based type-inferencing logic for a field, use the key <tt>:type</tt> with a valid AR type.  This can be handy if you end up going through a lot of joins and Ultrasphinx can't figure out the right model to introspect.
+
 Note that <tt>float</tt> fields are supported, but require Sphinx 0.98.
 
 == Requiring conditions
@@ -195,7 +197,7 @@ If the associations weren't just <tt>has_many</tt> and <tt>belongs_to</tt>, you 
       opts['fields'].map! do |entry|
         if entry.is_a? Hash
           entry._stringify_all!('sortable', 'facet')
-          entry.assert_valid_keys ['field', 'as', 'facet', 'function_sql', 'sortable', 'table_alias']
+          entry.assert_valid_keys ['field', 'as', 'facet', 'function_sql', 'sortable', 'table_alias', 'type']
           entry
         else
           # Single strings
@@ -218,7 +220,7 @@ If the associations weren't just <tt>has_many</tt> and <tt>belongs_to</tt>, you 
       
       opts['include'].each do |entry|
         entry._stringify_all!('sortable', 'facet')
-        entry.assert_valid_keys ['class_name', 'association_name', 'field', 'as', 'association_sql', 'facet', 'function_sql', 'sortable', 'table_alias', 'dont_group_by']
+        entry.assert_valid_keys ['class_name', 'association_name', 'field', 'as', 'association_sql', 'facet', 'function_sql', 'sortable', 'table_alias', 'dont_group_by', 'type']
       end
                   
       Ultrasphinx::MODEL_CONFIGURATION[self.name] = opts
