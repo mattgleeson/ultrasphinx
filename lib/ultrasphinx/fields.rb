@@ -108,7 +108,7 @@ This is a special singleton configuration class that stores the index field conf
         begin
         
           # Fields are from the model
-          options['fields'] = options['fields'].to_a.map do |entry|
+          options['fields'].to_a.each do |entry|
             extract_table_alias!(entry, klass)
             extract_field_alias!(entry, klass)
             
