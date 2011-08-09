@@ -330,7 +330,7 @@ module Ultrasphinx
             column_strings, remaining_columns = install_field(fields, source_string, entry['as'], entry['function_sql'], entry['facet'], entry['sortable'], column_strings, remaining_columns)              
 
           else
-            raise ConfigurationError, "Invalid concatenate parameters for #{model}: #{entry.inspect}."
+            raise ConfigurationError, "Invalid concatenate parameters for #{klass}: #{entry.inspect}."
           end
         end
         
