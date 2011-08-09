@@ -8,7 +8,7 @@ module Ultrasphinx
       # Force all the indexed models to load and register in the MODEL_CONFIGURATION hash.
       def load_constants
   
-        Dir.chdir "#{RAILS_ROOT}/app/models/" do
+        Dir.chdir "#{Rails.root}/app/models/" do
           Dir["**/*.rb"].each do |filename|
             open(filename) do |file| 
               begin
@@ -22,7 +22,7 @@ module Ultrasphinx
                 end
               rescue Object => e
                 say "warning: critical autoload error on #{filename}; try referencing \"#{filename.camelize}\" directly in the console"
-                say e.backtrace.join("\n") if RAILS_ENV == "development"
+                say e.backtrace.join("\n") if Rails.env.development?
               end
             end 
           end
@@ -38,7 +38,7 @@ module Ultrasphinx
 
         load_constants
               
-        say "rebuilding configurations for #{RAILS_ENV} environment" 
+        say "rebuilding configurations for #{Rails.env} environment" 
         # stable sort classes by name rather than rely on hash order
         model_list = MODEL_CONFIGURATION.keys.sort
         say "available models are #{model_list.to_sentence}"
@@ -310,6 +310,10 @@ module Ultrasphinx
             source_string = "#{entry['table_alias']}.#{entry['field']}"
             order_string = ("ORDER BY #{entry['order']}" if entry['order'])
             # We are using the field in an aggregate, so we don't want to add it to group_bys
+            if entry['multi']
+              source_string = SQL_FUNCTIONS[ADAPTER]['hash']._interpolate(source_string)
+            end
+            
             source_string = SQL_FUNCTIONS[ADAPTER]['group_concat']._interpolate(source_string, order_string)
             use_distinct = true
             
