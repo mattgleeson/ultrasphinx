@@ -1,12 +1,17 @@
-
-require 'initializer'
-
-class Rails::Initializer
-
-  def after_initialize_with_ultrasphinx_configuration
-    after_initialize_without_ultrasphinx_configuration
+if defined?(Rails::Railtie)
+  # rails 3
+  module Ultrasphinx
+    class Railtie < Rails::Railtie
+      initializer "ultrasphinx.active_record" do
+        ActiveSupport.on_load :active_record do
+          Ultrasphinx::Configure.load_constants
+        end
+      end
+    end
+  end
+else
+  # rails 2.3
+  Rails.configuration.after_initialize do
     Ultrasphinx::Configure.load_constants
-  end     
-  
-  alias_method_chain :after_initialize, :ultrasphinx_configuration
+  end
 end
